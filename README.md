@@ -2,6 +2,62 @@
 Self-Driving Car Engineer Nanodegree Program
 
 ---
+The Model
+
+As we are interested in the motion of the vehicle, the state represents a dynamic model. The model state has the following parameters:
+  * Position Co ordinates - x and y  
+  * Orientation of the vehicle - psi
+  * Velocity of the vehicle - v
+  * Cross track error - cte
+  * Orientation error - epsi
+
+The actuator inputs that influence the motion are:
+  * Throttle that provides the acceleration - a
+  * Steering angle - delta
+
+
+The equations used to determine how the state changes over time, based on previous state and current actuator inputs are:
+
+      x[t+1] = x[t] + v[t] * cos(psi[t]) * dt
+      y[t+1] = y[t] + v[t] * sin(psi[t]) * dt
+      psi[t+1] = psi[t] + v[t] / Lf * delta[t] * dt
+      v[t+1] = v[t] + a[t] * dt
+      cte[t+1] = f(x[t]) - y[t] + v[t] * sin(epsi[t]) * dt
+      epsi[t+1] = psi[t] - psides[t] + v[t] * delta[t] / Lf * dt
+
+      Lf measures the distance between the front of the vehicle and its center of gravity. The larger the vehicle, the slower the turn rate.
+
+Timestep Length and Elapsed Duration (N & dt)
+
+  While driving in real life, we keep an eye to the road ahead in the distance. This allows us to anticipate turns, traffic, possible obstacles etc. The look ahead allows us to plan and can influence the speed and smoothness of the drive. This look ahead is modeled as the Horizon in the model.
+
+  The horizon is typically for a few seconds. A longer horizon does not influence too much as the conditions may change by that time. Under certain conditions, a longer horizon is good as it may help to avoid certain emergencies. But for this project, this finer aspect of driving is not useful. Infact, I found that a long horizon causes a lot of problems as you approach the curves. 
+
+  A short horizon causes the car to be very unstable and experiences a lot of oscillations. 
+
+  I started with a small horizon - N = 10 and dt = 0.05. The car would drive at very low speeds and oscillate. It was undrivable at higher speeds
+
+  N = 20, dt = 0.6 was a very long horizon. It worked well for straight roads. But at curves the results were terrible
+
+  I settled  for N = 10 and dt = 0.2 where the horizon is equivalent to 2 sec
+
+Polynomial Fitting and MPC Preprocessing
+
+A polynomial is fitted to waypoints. Initially got the car running using 1st order polynomial. As this is a straight line fit, it drives well on straight roads, but jumps around at the curves. To address this, I switched to a 3rd order polynomial. This makes the car turn smoothly
+
+As part of the preprocessing, I shifted the coordiantes to (0,0) as mentioned in the Q&A video
+
+
+Model Predictive Control with Latency
+
+I used the following to introduce latency. I have not understood this part well. It was suggested on the project forum.
+
+          double latency = 0.1;
+          px += v * cos(psi) * latency;
+          py += v * sin(psi) * latency;
+          psi -= v * steer_value / Lf * latency;
+          v += throttle_value * latency;
+---
 
 ## Dependencies
 
