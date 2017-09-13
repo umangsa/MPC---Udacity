@@ -29,28 +29,28 @@ The equations used to determine how the state changes over time, based on previo
 
 Timestep Length and Elapsed Duration (N & dt)
 
-  While driving in real life, we keep an eye to the road ahead in the distance. This allows us to anticipate turns, traffic, possible obstacles etc. The look ahead allows us to plan and can influence the speed and smoothness of the drive. This look ahead is modeled as the Horizon in the model.
+    While driving in real life, we keep an eye to the road ahead in the distance. This allows us to anticipate turns, traffic, possible obstacles etc. The look ahead allows us to plan and can influence the speed and smoothness of the drive. This look ahead is modeled as the Horizon in the model.
 
-  The horizon is typically for a few seconds. A longer horizon does not influence too much as the conditions may change by that time. Under certain conditions, a longer horizon is good as it may help to avoid certain emergencies. But for this project, this finer aspect of driving is not useful. Infact, I found that a long horizon causes a lot of problems as you approach the curves. 
+    The horizon is typically for a few seconds. A longer horizon does not influence too much as the conditions may change by that time. Under certain conditions, a longer horizon is good as it may help to avoid certain emergencies. But for this project, this finer aspect of driving is not useful. Infact, I found that a long horizon causes a lot of problems as you approach the curves. 
 
-  A short horizon causes the car to be very unstable and experiences a lot of oscillations. 
+    A short horizon causes the car to be very unstable and experiences a lot of oscillations. 
 
-  I started with a small horizon - N = 10 and dt = 0.05. The car would drive at very low speeds and oscillate. It was undrivable at higher speeds
+    I started with a small horizon - N = 10 and dt = 0.05. The car would drive at very low speeds and oscillate. It was undrivable at higher speeds
 
-  N = 20, dt = 0.6 was a very long horizon. It worked well for straight roads. But at curves the results were terrible
+    N = 20, dt = 0.6 was a very long horizon. It worked well for straight roads. But at curves the results were terrible
 
-  I settled  for N = 10 and dt = 0.2 where the horizon is equivalent to 2 sec
+    I settled  for N = 10 and dt = 0.2 where the horizon is equivalent to 2 sec
 
 Polynomial Fitting and MPC Preprocessing
 
-A polynomial is fitted to waypoints. Initially got the car running using 1st order polynomial. As this is a straight line fit, it drives well on straight roads, but jumps around at the curves. To address this, I switched to a 3rd order polynomial. This makes the car turn smoothly
+    A polynomial is fitted to waypoints. Initially got the car running using 1st order polynomial. As this is a straight line fit, it drives well on straight roads, but jumps around at the curves. To address this, I switched to a 3rd order polynomial. This makes the car turn smoothly
 
-As part of the preprocessing, I shifted the coordiantes to (0,0) as mentioned in the Q&A video
+    As part of the preprocessing, I shifted the coordiantes to (0,0) as mentioned in the Q&A video
 
 
 Model Predictive Control with Latency
 
-I used the following to introduce latency. I have not understood this part well. It was suggested on the project forum.
+    I used the following to introduce latency. I have not understood this part well. It was suggested on the project forum.
 
           double latency = 0.1;
           px += v * cos(psi) * latency;
